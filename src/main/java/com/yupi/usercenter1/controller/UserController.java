@@ -42,8 +42,8 @@ public class UserController {
         return userService.userRegister(userAccount, userPassword, checkPassword);
     }
 
-    @PostMapping("/reqister")
-    public User userLogin(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request){
+    @PostMapping("/login")
+    public User userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
         if (userLoginRequest == null){
             return null;
         }
