@@ -1,5 +1,6 @@
 package com.yupi.usercenter1.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yupi.usercenter1.model.domain.User;
 import com.yupi.usercenter1.model.domain.request.UserLoginRequest;
 import com.yupi.usercenter1.model.domain.request.UserRegisterRequest;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * ClassName：UserController
@@ -54,4 +56,22 @@ public class UserController {
         }
         return userService.userLogin(userAccount, userPassword, request);
     }
+
+   @GetMapping("/search")
+    public List<User> searchUsers(String username){
+       QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+       if (StringUtils.isNotBlank(username)){
+           queryWrapper.like("username", username);
+       }
+       return userService.list(queryWrapper);
+   }
+
+   @PostMapping("/delete")
+    public boolean deleteUser(@RequestBody Long id){
+        if (id <= 0){
+            return false;
+        }
+        return userService.removeById(id);
+   }
+
 }
