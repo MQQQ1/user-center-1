@@ -37,10 +37,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword, String planetCode) {
 
         //1.校验--非空
-        if(StringUtils.isAllBlank(userAccount, userPassword, checkPassword)){
+        if(StringUtils.isAllBlank(userAccount, userPassword, checkPassword, planetCode)){
             return -1;
         }
         //账号不能小于4位
@@ -49,6 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //密码不能小于8位
         if(userPassword.length() < 8 || checkPassword.length() < 8){
+            return -1;
+        }
+        if(planetCode.length() > 5){
             return -1;
         }
         //账号不能包含特殊字符
@@ -69,6 +72,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return -1;
         }
 
+        //星球编号不能重复
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount",userAccount);
+        count = userMapper.selectCount(queryWrapper);
+        if(count > 0){
+            return -1;
+        }
+
         //2.对密码加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
@@ -76,6 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
+        user.setPlanetCode(planetCode);
         boolean saverResult = this.save(user);
         if(!saverResult){
             return -1;
@@ -136,9 +148,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setId(originUser.getId());
         safetyUser.setUsername(originUser.getUsername());
         safetyUser.setUserAccount(originUser.getUserAccount());
-        safetyUser.setUserUrl(originUser.getUserUrl());
+        safetyUser.setavatarUrl(originUser.getAvatarUrl());
         safetyUser.setGender(originUser.getGender());
         safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setPlanetCode(originUser.getPlanetCode());
         safetyUser.setUserStatus(originUser.getUserStatus());
         safetyUser.setUserRole(originUser.getUserRole());
         safetyUser.setPhone(originUser.getPhone());

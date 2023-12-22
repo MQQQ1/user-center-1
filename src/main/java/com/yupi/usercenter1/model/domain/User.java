@@ -32,7 +32,7 @@ public class User implements Serializable {
     /**
      * 用户头像
      */
-    private String userUrl;
+    private String avatarUrl;
 
     /**
      * 性别
@@ -80,6 +80,14 @@ public class User implements Serializable {
      */
     private Integer userRole;
 
+    /**
+     * 星球编号
+     */
+    private String planetCode;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public void setavatarUrl(String avatarUrl) {
+    }
 }
