@@ -3,6 +3,8 @@ package com.yupi.usercenter1.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.usercenter1.Mapper.UserMapper;
+import com.yupi.usercenter1.common.ErrorCode;
+import com.yupi.usercenter1.exception.BusinessException;
 import com.yupi.usercenter1.model.domain.User;
 import com.yupi.usercenter1.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,18 +43,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //1.校验--非空
         if(StringUtils.isAllBlank(userAccount, userPassword, checkPassword, planetCode)){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
         }
         //账号不能小于4位
         if(userAccount.length() < 4){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号过短");
         }
         //密码不能小于8位
         if(userPassword.length() < 8 || checkPassword.length() < 8){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"密码过短");
         }
         if(planetCode.length() > 5){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"星球编号过长");
         }
         //账号不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\\\\\[\\\\\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
@@ -69,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userAccount",userAccount);
         Long count = userMapper.selectCount(queryWrapper);
         if(count > 0){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号重复");
         }
 
         //星球编号不能重复
@@ -77,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userAccount",userAccount);
         count = userMapper.selectCount(queryWrapper);
         if(count > 0){
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"星球编号重复");
         }
 
         //2.对密码加密

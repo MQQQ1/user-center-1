@@ -19,24 +19,24 @@ public class BaseResponse<T> implements Serializable {
 
     private  T data;
 
-    private String messgae;
+    private String message;
 
     private String descripton;
 
-    public BaseResponse(int code, T data, String messgae, String descripton) {
+    public BaseResponse(int code, T data, String message, String descripton) {
         this.code = code;
         this.data = data;
-        this.messgae = messgae;
+        this.message = message;
         this.descripton = descripton;
     }
 
-    public BaseResponse(int code, T data, String messgae){
-        this(code, data, messgae,"");
+    public BaseResponse(int code, T data, String message){
+        this(code, data, message,"");
     }
     public BaseResponse(int code, T data){
         this(code, data ,"","");
     }
     public BaseResponse(ErrorCode errorCode){
-        this(errorCode.getCode(), null, errorCode.getMessgae(), errorCode.getDescripton());
+        this(errorCode.getCode(), null, errorCode.getMessage(), errorCode.getDescripton());
     }
 }

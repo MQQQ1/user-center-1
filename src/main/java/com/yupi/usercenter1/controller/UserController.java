@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yupi.usercenter1.common.BaseResponse;
 import com.yupi.usercenter1.common.ErrorCode;
 import com.yupi.usercenter1.common.ResultUtil;
+import com.yupi.usercenter1.exception.BusinessException;
 import com.yupi.usercenter1.model.domain.User;
 import com.yupi.usercenter1.model.domain.request.UserLoginRequest;
 import com.yupi.usercenter1.model.domain.request.UserRegisterRequest;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,14 +42,14 @@ public class UserController {
     @PostMapping("/reqister")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
-            return ResultUtil.error(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
         String planetCode = userRegisterRequest.getPlanetCode();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long resulf = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
         return ResultUtil.success(resulf);
@@ -58,12 +58,12 @@ public class UserController {
     @PostMapping("/login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.userLogin(userAccount, userPassword, request);
         return ResultUtil.success(user);
@@ -72,7 +72,7 @@ public class UserController {
     @PostMapping("/logout")
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         int result = userService.userLogout(request);
         return ResultUtil.success(result);
@@ -83,7 +83,7 @@ public class UserController {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User)  userObj;
         if(currentUser == null){
-            return null;
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
         long userId = currentUser.getId();
         //todo 校验用户是否合法
@@ -96,7 +96,7 @@ public class UserController {
     public BaseResponse<List<User>> searchUsers(String username, HttpServletRequest request) {
         //仅管理员可查询
         if (!isAdmin(request)) {
-            return new ArrayList<>();
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {
@@ -111,10 +111,10 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody Long id, HttpServletRequest request) {
         //仅管理员可删除
         if (!isAdmin(request)) {
-            return null;
+            throw new BusinessException(ErrorCode.NO_AUTN);
         }
         if (id <= 0) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         boolean b = userService.removeById(id);
         return ResultUtil.success(b);
