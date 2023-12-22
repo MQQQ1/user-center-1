@@ -31,24 +31,23 @@ public class ResultUtil {
     }
 
     /**
-     * 失败
-     * @param code
-     * @param message
-     * @param description
-     * @return
-     */
-    public static BaseResponse error(int code, String message, String description){
-        return new BaseResponse<>(code, null, message, description);
-    }
-
-    /**
-     * 失败
+     * 失败 - 描述无消息
      * @param errorCode
      * @param description
      * @return
      */
     public static BaseResponse error(ErrorCode errorCode, String description){
-        return new BaseResponse(errorCode.getCode(), errorCode.getMessage(), description);
+        return new BaseResponse<>(errorCode.getCode(), null, errorCode.getMessage(), description);
+    }
+
+    /**
+     * 失败 - 消息和描述
+     * @param errorCode
+     * @param description
+     * @return
+     */
+    public static BaseResponse error(ErrorCode errorCode, String message, String description){
+        return new BaseResponse(errorCode.getCode(), null,  errorCode.getMessage(), description);
     }
 
 }

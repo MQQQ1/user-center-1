@@ -15,6 +15,7 @@ import java.io.Serializable;
  */
 @Data
 public class BaseResponse<T> implements Serializable {
+
     private int code;
 
     private  T data;

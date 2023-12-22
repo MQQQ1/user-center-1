@@ -22,18 +22,18 @@ public class BusinessException extends RuntimeException {
     }
 
     public BusinessException(ErrorCode errorCode) {
-        super(ErrorCode.getMessage());
+        super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.description = errorCode.getDescripton();
     }
     public BusinessException(ErrorCode errorCode, String description) {
-        super(ErrorCode.getMessage());
+        super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.description = errorCode.getDescripton();
     }
 
-    public int getCode() {
-        return code;
+    public ErrorCode getCode() {
+        return null;
     }
 
     public String getDescription() {
